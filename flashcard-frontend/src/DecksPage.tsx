@@ -80,40 +80,89 @@ const DecksPage: React.FC = () => {
 
   return (
     <div>
-      <h2>Decks</h2>
-      <button onClick={handleLogout}>Logout</button>
-      <form onSubmit={handleCreate}>
-        <input
-          type="text"
-          placeholder="New deck name"
-          value={newDeck}
-          onChange={e => setNewDeck(e.target.value)}
-          required
-        />
-        <button type="submit">Create Deck</button>
-      </form>
-      {error && <div style={{color: 'red'}}>{error}</div>}
-      <ul>
-        {decks.map(deck => (
-          <li key={deck.id}>
-            {editingId === deck.id ? (
-              <form onSubmit={handleEditSubmit} style={{ display: 'inline' }}>
-                <input value={editingName} onChange={e => setEditingName(e.target.value)} required />
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => setEditingId(null)}>Cancel</button>
-              </form>
-            ) : (
-              <>
-                {deck.name}
-                <button onClick={() => handleEdit(deck)}>Edit</button>
-                <button onClick={() => handleDelete(deck.id)}>Delete</button>
-                <button onClick={() => navigate(`/decks/${deck.id}/flashcards`)}>Add/View Cards</button>
-                <button onClick={() => navigate(`/review/${deck.id}`)}>Review</button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+      <div className="header">
+        <div className="container">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h1>My Decks</h1>
+            <button onClick={handleLogout} className="btn btn-secondary">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="container">
+        <div className="card">
+          <h2 style={{ marginTop: 0, marginBottom: '20px' }}>Create New Deck</h2>
+          <form onSubmit={handleCreate} style={{ display: 'flex', gap: '12px' }}>
+            <input
+              type="text"
+              className="input"
+              placeholder="Enter deck name"
+              value={newDeck}
+              onChange={e => setNewDeck(e.target.value)}
+              required
+              style={{ flex: 1 }}
+            />
+            <button type="submit" className="btn">
+              Create Deck
+            </button>
+          </form>
+        </div>
+
+        {error && <div className="message error">{error}</div>}
+
+        <div className="grid">
+          {decks.map(deck => (
+            <div key={deck.id} className="card">
+              {editingId === deck.id ? (
+                <form onSubmit={handleEditSubmit}>
+                  <input
+                    className="input"
+                    value={editingName}
+                    onChange={e => setEditingName(e.target.value)}
+                    required
+                    style={{ marginBottom: '12px' }}
+                  />
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button type="submit" className="btn">
+                      Save
+                    </button>
+                    <button type="button" onClick={() => setEditingId(null)} className="btn btn-secondary">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <h3 style={{ marginTop: 0, marginBottom: '16px' }}>{deck.name}</h3>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <button onClick={() => handleEdit(deck)} className="btn btn-secondary">
+                      Edit
+                    </button>
+                    <button onClick={() => navigate(`/decks/${deck.id}/flashcards`)} className="btn">
+                      Add Cards
+                    </button>
+                    <button onClick={() => navigate(`/review/${deck.id}`)} className="btn">
+                      Review
+                    </button>
+                    <button onClick={() => handleDelete(deck.id)} className="btn btn-danger">
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {decks.length === 0 && (
+          <div className="card" style={{ textAlign: 'center', color: '#586380' }}>
+            <h3>No decks yet</h3>
+            <p>Create your first deck to get started!</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

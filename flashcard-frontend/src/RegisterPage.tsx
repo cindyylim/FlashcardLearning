@@ -25,26 +25,47 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Register</button>
-      </form>
-      {error && <div style={{color: 'red'}}>{error}</div>}
+    <div className="container">
+      <div className="form">
+        <h1>Create your account</h1>
+        <p style={{ color: '#586380', marginBottom: '32px' }}>Start learning with flashcards</p>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              className="input"
+              placeholder="Choose a username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              className="input"
+              placeholder="Create a password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn" style={{ width: '100%' }}>
+            Create Account
+          </button>
+        </form>
+        {error && <div className="message error">{error}</div>}
+        <p style={{ textAlign: 'center', marginTop: '24px' }}>
+          Already have an account?{' '}
+          <a href="/login" style={{ color: '#3ccfcf', textDecoration: 'none', fontWeight: '600' }}>
+            Sign in
+          </a>
+        </p>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { apiRequest } from './api.ts';
 import { useAuth } from './AuthContext.tsx';
 
@@ -7,14 +7,13 @@ interface Flashcard {
   id: number;
   question: string;
   answer: string;
-  timesReviewed: number;
-  timesCorrect: number;
   box: number;
 }
 
 const ReviewPage: React.FC = () => {
   const { deckId } = useParams<{ deckId: string }>();
   const { token } = useAuth();
+  const navigate = useNavigate();
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [current, setCurrent] = useState<number>(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -55,39 +54,110 @@ const ReviewPage: React.FC = () => {
     }
   };
 
-  if (error) return <div style={{color: 'red'}}>{error}</div>;
-  if (done) return (
-    <div>
-      <div>Review session complete!</div>
-      <div>Correct: {correctCount} | Incorrect: {incorrectCount} | Percent Correct: {flashcards.length ? Math.round((correctCount / flashcards.length) * 100) : 0}%</div>
+  if (error) return (
+    <div className="container">
+      <div className="message error">{error}</div>
     </div>
   );
-  if (!flashcards.length) return <div>No flashcards to review.</div>;
+
+  if (done) return (
+    <div className="container">
+      <div className="card" style={{ textAlign: 'center' }}>
+        <h1>Review Complete!</h1>
+        <div style={{ fontSize: '18px', marginBottom: '24px' }}>
+          <div>Correct: <strong style={{ color: '#3ccfcf' }}>{correctCount}</strong></div>
+          <div>Incorrect: <strong style={{ color: '#ff6b6b' }}>{incorrectCount}</strong></div>
+          <div>Accuracy: <strong style={{ color: '#2d3748' }}>
+            {flashcards.length ? Math.round((correctCount / flashcards.length) * 100) : 0}%
+          </strong></div>
+        </div>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          <button onClick={() => fetchFlashcards()} className="btn">
+            Review Again
+          </button>
+          <button onClick={() => navigate('/decks')} className="btn btn-secondary">
+            Back to Decks
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!flashcards.length) return (
+    <div className="container">
+      <div className="card" style={{ textAlign: 'center', color: '#586380' }}>
+        <h3>No flashcards to review</h3>
+        <p>Add some flashcards to your deck first!</p>
+        <button onClick={() => navigate(`/decks/${deckId}/flashcards`)} className="btn">
+          Add Flashcards
+        </button>
+      </div>
+    </div>
+  );
 
   const fc = flashcards[current];
 
   return (
     <div>
-      <h2>Review</h2>
-      <div>
-        <strong>Q:</strong> {fc.question}
+      <div className="header">
+        <div className="container">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h1>Review Session</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <span style={{ color: '#586380' }}>
+                {current + 1} of {flashcards.length}
+              </span>
+              <button onClick={() => navigate('/decks')} className="btn btn-secondary">
+                Exit Review
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      {showAnswer ? (
-        <div>
-          <strong>A:</strong> {fc.answer}
+
+      <div className="container">
+        <div className="flashcard" style={{ minHeight: '300px', margin: '40px 0' }}>
+          <div className="flashcard-question">{fc.question}</div>
+          {showAnswer && (
+            <div className="flashcard-answer">{fc.answer}</div>
+          )}
         </div>
-      ) : (
-        <button onClick={() => setShowAnswer(true)}>Show Answer</button>
-      )}
-      {showAnswer && (
-        <div>
-          <button onClick={() => handleReview(true)}>I was correct</button>
-          <button onClick={() => handleReview(false)}>I was wrong</button>
+
+        <div className="review-controls">
+          {!showAnswer ? (
+            <button 
+              onClick={() => setShowAnswer(true)} 
+              className="btn"
+              style={{ fontSize: '18px', padding: '16px 32px' }}
+            >
+              Show Answer
+            </button>
+          ) : (
+            <>
+              <button 
+                onClick={() => handleReview(false)} 
+                className="btn btn-danger"
+                style={{ fontSize: '18px', padding: '16px 32px' }}
+              >
+                Incorrect
+              </button>
+              <button 
+                onClick={() => handleReview(true)} 
+                className="btn"
+                style={{ fontSize: '18px', padding: '16px 32px' }}
+              >
+                Correct
+              </button>
+            </>
+          )}
         </div>
-      )}
-      <div>Card {current + 1} of {flashcards.length}</div>
-      <div style={{marginTop: 10}}>
-        <strong>Session Progress:</strong> Correct: {correctCount} | Incorrect: {incorrectCount} | Percent Correct: {flashcards.length ? Math.round((correctCount / (current + 1)) * 100) : 0}%
+
+        <div style={{ textAlign: 'center', marginTop: '32px', color: '#586380' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '24px' }}>
+            <span>Correct: <strong style={{ color: '#3ccfcf' }}>{correctCount}</strong></span>
+            <span>Incorrect: <strong style={{ color: '#ff6b6b' }}>{incorrectCount}</strong></span>
+          </div>
+        </div>
       </div>
     </div>
   );
