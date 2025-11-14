@@ -31,15 +31,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       method: 'POST',
       body: JSON.stringify({ username, password }),
     });
-    setToken(res.token);
+    setToken(res.accessToken);
   };
 
   const register = async (username: string, password: string) => {
-    const res = await apiRequest('/auth/register', {
+    await apiRequest('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ username, password }),
     });
-    setToken(res.token);
+    // After registration, automatically log in
+    await login(username, password);
   };
 
   const logout = () => setToken(null);

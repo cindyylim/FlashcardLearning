@@ -26,7 +26,13 @@ const DecksPage: React.FC = () => {
     }
   };
 
-  useEffect(() => { fetchDecks(); }, [token]);
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    fetchDecks();
+  }, [token, navigate]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,30 +1,55 @@
 package com.flashcardapp.model;
 
 import jakarta.persistence.*;
-import java.util.Set;
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "decks")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Deck {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    // Many decks belong to one user
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore  // do not send user to front-end
     private User user;
 
-    @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Flashcard> flashcards;
+    // A deck has many flashcards
+    @OneToMany(mappedBy = "deck",
+               cascade = CascadeType.ALL,
+               orphanRemoval = true)
+    private List<Flashcard> flashcards = new ArrayList<>();
 
-    // getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-    public Set<Flashcard> getFlashcards() { return flashcards; }
-    public void setFlashcards(Set<Flashcard> flashcards) { this.flashcards = flashcards; }
-} 
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+}

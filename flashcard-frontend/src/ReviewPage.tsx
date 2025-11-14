@@ -8,6 +8,8 @@ interface Flashcard {
   question: string;
   answer: string;
   box: number;
+  timesReviewed?: number;
+  timesCorrect?: number;
 }
 
 const ReviewPage: React.FC = () => {
@@ -40,9 +42,19 @@ const ReviewPage: React.FC = () => {
   const handleReview = async (correct: boolean) => {
     const fc = flashcards[current];
     try {
-      await apiRequest(`/progress/review/${fc.id}?correct=${correct}`, { method: 'POST' }, token!);
+      const updatedFlashcard = await apiRequest(`/progress/review/${fc.id}?correct=${correct}`, { method: 'PATCH' }, token!);
+      
+      // Update the local flashcards array with the updated flashcard data
+      // Don't re-sort during the session to keep current index valid
+      setFlashcards(prev => prev.map(card => 
+        card.id === fc.id 
+          ? { ...card, box: updatedFlashcard.box, timesReviewed: updatedFlashcard.timesReviewed, timesCorrect: updatedFlashcard.timesCorrect }
+          : card
+      ));
+      
       if (correct) setCorrectCount(c => c + 1);
       else setIncorrectCount(c => c + 1);
+      
       if (current + 1 < flashcards.length) {
         setCurrent(current + 1);
         setShowAnswer(false);
