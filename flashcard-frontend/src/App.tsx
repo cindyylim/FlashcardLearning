@@ -8,6 +8,7 @@ import DecksPage from './DecksPage.tsx';
 import FlashcardsPage from './FlashcardsPage.tsx';
 import ReviewPage from './ReviewPage.tsx';
 import ImportExportPage from './ImportExportPage.tsx';
+import ProtectedRoute from './ProtectedRoute.tsx';
 
 function App() {
   return (
@@ -26,10 +27,10 @@ function App() {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/decks" element={<DecksPage />} />
-              <Route path="/decks/:deckId/flashcards" element={<FlashcardsPage />} />
-              <Route path="/review/:deckId" element={<ReviewPage />} />
-              <Route path="/import-export" element={<ImportExportPage />} />
+              <Route path="/decks" element={<ProtectedRoute><DecksPage /></ProtectedRoute>} />
+              <Route path="/decks/:deckId/flashcards" element={<ProtectedRoute><FlashcardsPage /></ProtectedRoute>} />
+              <Route path="/review/:deckId" element={<ProtectedRoute><ReviewPage /></ProtectedRoute>} />
+              <Route path="/import-export" element={<ProtectedRoute><ImportExportPage /></ProtectedRoute>} />
               <Route path="*" element={<Navigate to="/login" />} />
             </Routes>
           </div>
