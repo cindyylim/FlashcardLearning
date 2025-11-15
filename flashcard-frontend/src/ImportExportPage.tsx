@@ -104,7 +104,7 @@ const ImportExportPage: React.FC = () => {
       window.URL.revokeObjectURL(url);
       setSuccess('Deck exported successfully!');
     } catch (err: any) {
-      setError(err.message.includes('Forbidden') ? 'Invalid deck name' : err.message);
+      setError(err.message);
     }
   };
 
