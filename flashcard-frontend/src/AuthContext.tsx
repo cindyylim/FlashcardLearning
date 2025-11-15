@@ -44,7 +44,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await login(username, password);
   };
 
-  const logout = () => setToken(null);
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+  }
 
   return (
     <AuthContext.Provider value={{ user, token, login, register, logout }}>

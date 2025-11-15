@@ -6,6 +6,7 @@
     "@types/react-router-dom": "^5.3.3",
     "cra-template-pwa-typescript": "2.0.0",
     "jwt-decode": "^4.0.0",
+    "papaparse": "^5.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3",

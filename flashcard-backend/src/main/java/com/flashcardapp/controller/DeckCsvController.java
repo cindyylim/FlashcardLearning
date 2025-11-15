@@ -88,7 +88,7 @@ public class DeckCsvController {
     }
     
     @GetMapping("/export/{deckId}")
-    public ResponseEntity<byte[]> exportDeck(
+    public ResponseEntity<?> exportDeck(
             @PathVariable Long deckId,
             @AuthenticationPrincipal UserDetails userDetails) throws IOException {
 
@@ -102,7 +102,7 @@ public class DeckCsvController {
 
         // 3. Authorization check
         if (!deck.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(403).build();
+            return ResponseEntity.status(403).body("Unauthorized");
         }
 
         // 4. Generate CSV
@@ -127,7 +127,7 @@ public class DeckCsvController {
     }
     
     @GetMapping("/export/{deckId}/stream")
-    public ResponseEntity<StreamingResponseBody> exportDeckStreaming(
+    public ResponseEntity<?> exportDeckStreaming(
             @PathVariable Long deckId,
             @AuthenticationPrincipal UserDetails userDetails) {
 
@@ -141,7 +141,7 @@ public class DeckCsvController {
 
         // 3. Authorization check
         if (!deck.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(403).build();
+            return ResponseEntity.status(403).body("Unauthorized");
         }
 
         // 4. Prepare StreamingResponseBody
