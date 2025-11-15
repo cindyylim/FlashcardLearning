@@ -16,11 +16,7 @@ const RegisterPage: React.FC = () => {
       await register(username, password);
       navigate('/decks');
     } catch (err: any) {
-      if (err.message && err.message.toLowerCase().includes('username already exists')) {
-        setError('That username is already taken. Please choose another.');
-      } else {
         setError(err.message || 'Registration failed');
-      }
     }
   };
 
