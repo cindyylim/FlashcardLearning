@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiRequest } from './api.ts';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   user: string | null;
@@ -17,8 +18,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     if (token) {
-      // In a real app, decode JWT or fetch user info
-      setUser('user');
+      const decoded = jwtDecode<{ sub: string }>(token);
+      setUser(decoded.sub!);
       localStorage.setItem('token', token);
     } else {
       setUser(null);
